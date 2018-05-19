@@ -1,0 +1,10 @@
+{   "namespace": "com.cisco.pnda",
+    "type": "record",
+    "name": "Car",
+    "fields": [
+        {"name": "id", "type": "int"},
+        {"name": "speed", "type": "double"},
+        {"name": "distance", "type": "double"},
+        {"name": "timestamp", "type": "long"}
+    ]
+}
