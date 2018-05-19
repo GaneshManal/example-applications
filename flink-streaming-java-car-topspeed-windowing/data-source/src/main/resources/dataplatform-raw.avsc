@@ -1,0 +1,15 @@
+{   "namespace": "com.cisco.pnda",
+    "type": "record",
+    "name": "NetworkInterface",
+    "fields": [
+        {"name": "hostname", "type": "string"},
+        {"name": "nw_interface", "type": "string"},
+        {"name": "RX_Bytes", "type": "long"},
+        {"name": "RX_Dropped", "type": "int"},
+        {"name": "RX_Errors", "type": "int"},
+        {"name": "TX_Bytes", "type": "long"},
+        {"name": "TX_Dropped", "type": "int"},
+        {"name": "TX_Errors", "type": "int"},
+        {"name": "timestamp", "type": "long"}
+    ]
+}
