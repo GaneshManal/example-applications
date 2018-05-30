@@ -148,14 +148,13 @@ public class NetworkDataAnalysis {
 								return newDataPoint.f2 - oldDataPoint.f2;
 							}
 						}, networkData.getType().createSerializer(env.getConfig())))
-				.maxBy(2);
+				.maxBy(9);
 
 		topUplinks.print();
 		DataStream<Tuple12<String, String, String, Long, Integer, Integer, Long, Integer, Integer, Long, Double, Double>> RxTriggerData = topUplinks.map(new ParseReceivedNetworkData(TRIGGER_RECEIVED));
 
 		// Transformation-2
-		/*
-		DataStream<Tuple9<String, String, Long, Integer, Integer, Long, Integer, Integer, Long>> topDownlinks = networkData
+		DataStream<Tuple11<String, String, Long, Integer, Integer, Long, Integer, Integer, Long, Double, Double>> topDownlinks = networkData
 				.assignTimestampsAndWatermarks(new InterfaceTimestamp())
 				.keyBy(0,1)
 				.window(GlobalWindows.create())
@@ -163,31 +162,31 @@ public class NetworkDataAnalysis {
 				//.countWindowAll(50)
 				.evictor(TimeEvictor.of(Time.of(evictionSec, TimeUnit.SECONDS)))
 				.trigger(DeltaTrigger.of(triggerBytes,
-						new DeltaFunction<Tuple9<String, String, Long, Integer, Integer, Long, Integer, Integer, Long>>() {
+						new DeltaFunction<Tuple11<String, String, Long, Integer, Integer, Long, Integer, Integer, Long, Double, Double>>() {
 							private static final long serialVersionUID = 1L;
 
 							@Override
 							public double getDelta(
-									Tuple9<String, String, Long, Integer, Integer, Long, Integer, Integer, Long> oldDataPoint,
-									Tuple9<String, String, Long, Integer, Integer, Long, Integer, Integer, Long> newDataPoint) {
+									Tuple11<String, String, Long, Integer, Integer, Long, Integer, Integer, Long, Double, Double> oldDataPoint,
+									Tuple11<String, String, Long, Integer, Integer, Long, Integer, Integer, Long, Double, Double> newDataPoint) {
 								return newDataPoint.f5 - oldDataPoint.f5;
 							}
 						}, networkData.getType().createSerializer(env.getConfig())))
-				.maxBy(5);
-		DataStream<Tuple10<String, String, String, Long, Integer, Integer, Long, Integer, Integer, Long>> TxTriggerData = topDownlinks.map(new ParseReceivedNetworkData(TRIGGER_TRANSMITED));
-		*/
+				.maxBy(10);
+		DataStream<Tuple12<String, String, String, Long, Integer, Integer, Long, Integer, Integer, Long, Double, Double>> TxTriggerData = topDownlinks.map(new ParseReceivedNetworkData(TRIGGER_TRANSMITED));
+		
 		// Data Sink
 		if (params.has("output")) {
 			RxTriggerData.writeAsText(params.get("output"));
 			RxTriggerData.print();
 
-			// TxTriggerData.writeAsText(params.get("output"));
-			// TxTriggerData.print();
+			TxTriggerData.writeAsText(params.get("output"));
+			TxTriggerData.print();
 
 		} else {
 			System.out.println("Printing result to stdout. Use --output to specify output path.");
 			RxTriggerData.print();
-			// TxTriggerData.print();
+			TxTriggerData.print();
 		}
 		env.execute("NetworkDataAnalysisWindowingExample");
 	}
@@ -232,9 +231,9 @@ public class NetworkDataAnalysis {
 		public Tuple12<String, String, String, Long, Integer, Integer, Long, Integer, Integer, Long, Double, Double> map(Tuple11 abc) {
 			String trigger = null;
 			if(TRIGGER_RECEIVED.equalsIgnoreCase(this.triggerType)) {
-				 trigger = "RX-Bytes Trigger";				
+				 trigger = "RX-Bytes-Trigger";				
 			} else {
-				trigger = "TX-Bytes Trigger";								
+				trigger = "TX-Bytes-Trigger";								
 			}
 			String hostname = String.valueOf(abc.f0);
 			String nw_interface = String.valueOf(abc.f1);
